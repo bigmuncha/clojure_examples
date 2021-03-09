@@ -1,14 +1,18 @@
-(ns clojure.examples.hello
-	(:gen-class))
-
-(defn foo [coll]
+(fn foo [coll]
      (let [groups (group-by :list ( map 
         (fn [a] 
            (conj (hash-map :list (sort (clojure.string/split a #"")))
                     (hash-map :result a))
             )
         coll))]
-        groups))
-
+        (loop [groups groups
+                result #{}]
+            (if (empty? groups) (set (remove #(= 1 (count %)) result))
+                (recur (rest groups) 
+                    (conj result
+                        (set (keys(group-by :result 
+                                    (-> groups first second)))))))))) 
+                        
+                        
+                        
             
-(println (foo ["veer" "lake" "item" "kale" "mite" "ever"]))
